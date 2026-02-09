@@ -1,0 +1,65 @@
+<div class="container mt-4">
+
+  <!-- Search input -->
+  <input
+    type="text"
+    class="form-control mb-3"
+    placeholder="Rechercher par titre ou catégorie"
+    [(ngModel)]="searchText"
+  />
+
+  <div *ngIf="filteredSuggestions.length > 0; else noData">
+
+    <div *ngFor="let suggestion of filteredSuggestions" class="card mb-3 shadow-sm">
+
+      <div class="card-body">
+        <h5 class="card-title">{{ suggestion.title }}</h5>
+        <p class="card-text">{{ suggestion.description }}</p>
+
+        <p class="mb-1"><strong>Category:</strong> {{ suggestion.category }}</p>
+        <p class="mb-1">
+          <strong>Status:</strong>
+          <span [ngClass]="{
+            'text-success': suggestion.status === 'acceptee',
+            'text-danger': suggestion.status === 'refusee',
+            'text-warning': suggestion.status === 'en_attente'
+          }">
+            {{ suggestion.status }}
+          </span>
+        </p>
+        <p class="mb-3"><strong>Likes:</strong> {{ suggestion.nbLikes }}</p>
+
+        <!-- Buttons shown ONLY if status is NOT refused -->
+        <div *ngIf="suggestion.status !== 'refusee'">
+          <button (click)="likeSuggestion(suggestion)" class="btn btn-primary btn-sm me-2">
+            👍 Like
+          </button>
+
+          <button (click)="addToFavorites(suggestion)" class="btn btn-outline-secondary btn-sm">
+            ⭐ Ajouter aux favoris
+          </button>
+
+          <button [routerLink]="['/detail', suggestion.id]" class="btn btn-outline-secondary btn-sm">voir Details</button>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+  <ng-template #noData>
+    <p class="text-muted">Aucune suggestion disponible.</p>
+  </ng-template>
+
+  <!-- Optional: Display favorites list -->
+  <div *ngIf="favorites.length > 0" class="mt-4">
+    <h4>Favoris</h4>
+    <ul class="list-group">
+      <li *ngFor="let fav of favorites" class="list-group-item">
+        {{ fav.title }}
+      </li>
+    </ul>
+  </div>
+  
+
+</div>
