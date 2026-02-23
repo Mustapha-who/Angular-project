@@ -1,0 +1,67 @@
+<h2>Ajouter une nouvelle suggestion</h2>
+
+<form [formGroup]="suggestionForm" (ngSubmit)="onSubmit()">
+
+  <div class="form-group">
+    <label for="title">Titre:</label>
+    <input
+      id="title"
+      type="text"
+      formControlName="title"
+      class="form-control"
+      [class.error]="title?.invalid && title?.touched"
+    >
+    <div *ngIf="title?.invalid && title?.touched" class="error-message">
+      <div *ngIf="title?.errors?.['required']">Le titre est requis.</div>
+      <div *ngIf="title?.errors?.['minlength']">Le titre doit contenir au moins 5 caractères.</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="description">Description:</label>
+    <textarea
+      id="description"
+      formControlName="description"
+      class="form-control"
+      rows="4"
+      [class.error]="description?.invalid && description?.touched"
+    ></textarea>
+    <div *ngIf="description?.invalid && description?.touched" class="error-message">
+      <div *ngIf="description?.errors?.['required']">La description est requise.</div>
+      <div *ngIf="description?.errors?.['minlength']">La description doit contenir au moins 10 caractères.</div>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="category">Catégorie:</label>
+    <select
+      id="category"
+      formControlName="category"
+      class="form-control"
+      [class.error]="category?.invalid && category?.touched"
+    >
+      <option value="">Sélectionnez une catégorie</option>
+      <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+    </select>
+    <div *ngIf="category?.invalid && category?.touched" class="error-message">
+      La catégorie est requise.
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="date">Date:</label>
+    <input
+      id="date"
+      type="date"
+      formControlName="date"
+      class="form-control"
+      [class.error]="date?.invalid && date?.touched"
+    >
+    <div *ngIf="date?.invalid && date?.touched" class="error-message">
+      La date est requise.
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="suggestionForm.invalid" class="btn-submit">Ajouter la suggestion</button>
+
+</form>

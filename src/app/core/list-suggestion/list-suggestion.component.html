@@ -1,65 +1,77 @@
-<div class="container mt-4">
+<div class="page">
 
-  <!-- Search input -->
+  <h2 class="title">Liste des suggestions</h2>
+
+  <button class="btn-add" [routerLink]="['/suggestions/add']">Ajouter une suggestion</button>
+
+  <!-- Recherche -->
   <input
+    class="search"
     type="text"
-    class="form-control mb-3"
-    placeholder="Rechercher par titre ou catégorie"
+    placeholder="Rechercher une suggestion"
     [(ngModel)]="searchText"
   />
 
-  <div *ngIf="filteredSuggestions.length > 0; else noData">
+  <div class="layout">
 
-    <div *ngFor="let suggestion of filteredSuggestions" class="card mb-3 shadow-sm">
+    <!-- LISTE SUGGESTIONS -->
+    <div class="list">
+      <div class="card" *ngFor="let s of filteredSuggestions()">
 
-      <div class="card-body">
-        <h5 class="card-title">{{ suggestion.title }}</h5>
-        <p class="card-text">{{ suggestion.description }}</p>
+        <div class="card-header">
+          <h3 class="card-title">{{ s.title }}</h3>
+          <p class="meta">
+            <span class="category">{{ s.category }}</span>
+            <span class="dot">•</span>
+            <span class="date">{{ s.date | date:'dd/MM/yyyy' }}</span>
+          </p>
+        </div>
 
-        <p class="mb-1"><strong>Category:</strong> {{ suggestion.category }}</p>
-        <p class="mb-1">
-          <strong>Status:</strong>
-          <span [ngClass]="{
-            'text-success': suggestion.status === 'acceptee',
-            'text-danger': suggestion.status === 'refusee',
-            'text-warning': suggestion.status === 'en_attente'
-          }">
-            {{ suggestion.status }}
-          </span>
-        </p>
-        <p class="mb-3"><strong>Likes:</strong> {{ suggestion.nbLikes }}</p>
+        <p class="desc">{{ s.description }}</p>
 
-        <!-- Buttons shown ONLY if status is NOT refused -->
-        <div *ngIf="suggestion.status !== 'refusee'">
-          <button (click)="likeSuggestion(suggestion)" class="btn btn-primary btn-sm me-2">
-            👍 Like
+        <!-- Status -->
+        <div class="badges">
+          <span class="badge accepted" *ngIf="s.status === 'acceptee'">ACCEPTÉE</span>
+          <span class="badge refused" *ngIf="s.status === 'refusee'">REFUSÉE</span>
+          <span class="badge pending" *ngIf="s.status === 'en_attente'">EN ATTENTE</span>
+        </div>
+
+        <!-- Actions (cachées si refusée) -->
+        <div class="actions" *ngIf="s.status !== 'refusee'">
+
+          <button class="btn btn-like" (click)="like(s)">
+            👍 Like <span class="count">{{ s.nbLikes }}</span>
           </button>
 
-          <button (click)="addToFavorites(suggestion)" class="btn btn-outline-secondary btn-sm">
-            ⭐ Ajouter aux favoris
+          <button
+            class="btn btn-fav"
+            (click)="addToFavorites(s)"
+            [disabled]="isFavorite(s)"
+          >
+            ⭐ {{ isFavorite(s) ? 'Déjà en favoris' : 'Ajouter aux favoris' }}
           </button>
 
-          <button [routerLink]="['/detail', suggestion.id]" class="btn btn-outline-secondary btn-sm">voir Details</button>
+          <button class="btn btn-detail" [routerLink]="['/suggestions/detail', s.id]">
+            📄 Voir détails
+          </button>
+
         </div>
       </div>
+    </div>
 
+    <!-- FAVORIS -->
+    <div class="favorites">
+      <h4 class="fav-title">Favoris</h4>
+
+      <p class="empty" *ngIf="favorites.length === 0">
+        Aucune suggestion en favoris pour le moment.
+      </p>
+
+      <div class="fav-item" *ngFor="let f of favorites">
+        <div class="fav-name">{{ f.title }}</div>
+        <div class="fav-sub">{{ f.category }}</div>
+      </div>
     </div>
 
   </div>
-
-  <ng-template #noData>
-    <p class="text-muted">Aucune suggestion disponible.</p>
-  </ng-template>
-
-  <!-- Optional: Display favorites list -->
-  <div *ngIf="favorites.length > 0" class="mt-4">
-    <h4>Favoris</h4>
-    <ul class="list-group">
-      <li *ngFor="let fav of favorites" class="list-group-item">
-        {{ fav.title }}
-      </li>
-    </ul>
-  </div>
-  
-
 </div>

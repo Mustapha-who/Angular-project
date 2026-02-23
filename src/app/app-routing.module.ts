@@ -1,17 +1,14 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { SuggestionDetailsComponent } from './suggestion-details/suggestion-details.component';
-import { ListSuggestionComponent } from './core/list-suggestion/list-suggestion.component';
 
 const routes: Routes = [
-  {path:'',redirectTo:'home',pathMatch:'full'},
-
-  {path: 'list',component: ListSuggestionComponent},
-  {path:'detail/:id',component:SuggestionDetailsComponent}
+  { path: '', loadChildren: () => import('./suggestions/suggestions.module').then(m => m.SuggestionsModule) },
+  { path: 'suggestions', loadChildren: () => import('./suggestions/suggestions.module').then(m => m.SuggestionsModule) },
+  { path: 'favorites', loadChildren: () => import('./favorites/favorites.module').then(m => m.FavoritesModule) }
 ];
 
 @NgModule({
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule { }
+export class AppRoutingModule {}

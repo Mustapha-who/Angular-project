@@ -1,0 +1,10 @@
+<h2>Mes Favoris</h2>
+<div *ngIf="favorites.length === 0">
+  <p>Aucune suggestion en favoris pour le moment.</p>
+</div>
+<div *ngFor="let f of favorites" class="fav-item">
+  <h3>{{ f.title }}</h3>
+  <p>{{ f.category }}</p>
+  <p>{{ f.description }}</p>
+  <button [routerLink]="['/suggestions/detail', f.id]">Voir détails</button>
+</div>
