@@ -1,12 +1,92 @@
-<div *ngIf="suggestion" class="suggestion-detail">
-  <h2>{{ suggestion.title }}</h2>
-  <p><strong>Description:</strong> {{ suggestion.description }}</p>
-  <p><strong>Category:</strong> {{ suggestion.category }}</p>
-  <p><strong>Date:</strong> {{ suggestion.date | date }}</p>
-  <p><strong>Status:</strong> {{ suggestion.status }}</p>
-  <p><strong>Likes:</strong> {{ suggestion.nbLikes }}</p>
-  <button (click)="like(suggestion)">Like</button>
+<div class="detail-page">
+
+  <!-- Loading -->
+  <div *ngIf="loading" class="not-found">
+    <p>⏳ Chargement...</p>
+  </div>
+
+  <!-- Error -->
+  <div *ngIf="error" class="not-found">
+    <p>{{ error }}</p>
+    <button class="btn btn-back" routerLink="/suggestions">⬅️ Retour à la liste</button>
+  </div>
+
+  <!-- Not found -->
+  <div *ngIf="!loading && !error && !suggestion" class="not-found">
+    <p>⚠️ Suggestion introuvable.</p>
+    <button class="btn btn-back" routerLink="/suggestions">⬅️ Retour à la liste</button>
+  </div>
+
+  <!-- Card -->
+  <div *ngIf="suggestion" class="detail-card">
+
+    <!-- Header -->
+    <div class="detail-header">
+      <div class="header-top">
+        <h2 class="detail-title">{{ suggestion.title }}</h2>
+        <span class="badge accepted" *ngIf="suggestion.status === 'accepted'">✅ ACCEPTÉE</span>
+        <span class="badge refused" *ngIf="suggestion.status === 'refused'">❌ REFUSÉE</span>
+        <span class="badge pending" *ngIf="suggestion.status === 'pending'">⏳ EN ATTENTE</span>
+      </div>
+      <div class="header-meta">
+        <span class="meta-item">📁 {{ suggestion.category }}</span>
+        <span class="dot">•</span>
+        <span class="meta-item">📅 {{ suggestion.date | date:'dd/MM/yyyy' }}</span>
+        <span class="dot">•</span>
+        <span class="meta-item">👍 {{ suggestion.nbLikes }} likes</span>
+      </div>
+    </div>
+
+    <!-- Body -->
+    <div class="detail-body">
+      <h4 class="section-label">Description</h4>
+      <p class="detail-description">{{ suggestion.description }}</p>
+    </div>
+
+    <!-- Footer Actions -->
+    <div class="detail-footer">
+      <button class="btn btn-like" (click)="like(suggestion)">
+        👍 Like <span class="count">({{ suggestion.nbLikes }})</span>
+      </button>
+      <button class="btn btn-edit" (click)="openEditModal()">
+        ✏️ Modifier
+      </button>
+      <button class="btn btn-back" routerLink="/suggestions">
+        ⬅️ Retour à la liste
+      </button>
+    </div>
+
+  </div>
 </div>
-<div *ngIf="!suggestion">
-  <p>Suggestion not found.</p>
+
+<!-- EDIT MODAL -->
+<div class="overlay" *ngIf="showModal" (click)="closeModal()">
+  <div class="modal" (click)="$event.stopPropagation()">
+
+    <h3>✏️ Modifier la suggestion</h3>
+
+    <label>Titre</label>
+    <input type="text" [(ngModel)]="editingSuggestion.title" placeholder="Titre" />
+
+    <label>Description</label>
+    <textarea [(ngModel)]="editingSuggestion.description" placeholder="Description" rows="4"></textarea>
+
+    <label>Catégorie</label>
+    <select [(ngModel)]="editingSuggestion.category">
+      <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+    </select>
+
+    <label>Statut</label>
+    <select [(ngModel)]="editingSuggestion.status">
+      <option value="pending">En attente</option>
+      <option value="accepted">Acceptée</option>
+      <option value="refused">Refusée</option>
+    </select>
+
+    <div class="modal-actions">
+      <button class="btn-cancel" (click)="closeModal()">Annuler</button>
+      <button class="btn-save" (click)="saveEdit()">💾 Sauvegarder</button>
+    </div>
+
+  </div>
 </div>

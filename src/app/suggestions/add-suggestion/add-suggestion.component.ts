@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { SuggestionService } from '../../core/suggestion.service';
+import { SuggestionService } from '../../suggestion.service';
 
 @Component({
   selector: 'app-add-suggestion',
@@ -31,17 +31,17 @@ export class AddSuggestionComponent {
     if (this.suggestionForm.valid) {
       const formValue = this.suggestionForm.value;
       const newSuggestion = {
-        id: this.suggestionService.getSuggestions().length + 1,
         title: formValue.title,
         description: formValue.description,
         category: formValue.category,
         date: new Date(formValue.date),
-        status: 'en_attente',
+        status: 'pending',
         nbLikes: 0
       };
 
-      this.suggestionService.getSuggestions().push(newSuggestion);
-      this.router.navigate(['/suggestions']);
+      this.suggestionService.addSuggestion(newSuggestion).subscribe(() => {
+        this.router.navigate(['/suggestions']);
+      });
     }
   }
 

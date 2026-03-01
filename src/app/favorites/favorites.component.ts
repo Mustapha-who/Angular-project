@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Suggestion } from '../models/suggestion';
-import { SuggestionService } from '../core/suggestion.service';
+import { SuggestionService } from '../suggestion.service';
 
 @Component({
   selector: 'app-favorites',
